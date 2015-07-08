@@ -15,7 +15,7 @@ RUN chmod u+x /usr/local/bin/confd && \
 	mkdir -p /etc/confd/conf.d && \
 	mkdir -p /etc/confd/templates \
 
-ADD ./src/etc/supervisord/conf.d/haproxy.conf /etc/supervisor/conf.d/haproxy.conf
+ADD ./src/etc/supervisor/conf.d/haproxy.conf /etc/supervisor/conf.d/haproxy.conf
 
 ADD ./src/etc/confd/conf.d/haproxy.toml /etc/confd/conf.d/haproxy.toml
 ADD ./src/etc/confd/templates/haproxy.tmpl /etc/confd/templates/haproxy.tmpl
