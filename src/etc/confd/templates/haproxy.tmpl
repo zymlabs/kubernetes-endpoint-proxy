@@ -33,14 +33,6 @@ frontend http-in
     bind *:80
     default_backend http
 
-    {{ range $spec := getvs "/registry/services/endpoints/*/*" }}
-	{{ $data := json $spec }}
-	{{ if eq $data.id $endpoint }}
-    acl {{ $data.id }}-aclrule hdr_beg(host) -i {{ getenv "HAPROXY_ACL" }}
-    use_backend {{ $data.id }}}-cluster if {{ $data.id }}-aclrule
-	{{ end }}
-	{{ end }}
-
 backend http{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
     option httpchk GET {{ getenv "HAPROXY_HEALTH_CHECK_PATH" }}
     {{ end }}
