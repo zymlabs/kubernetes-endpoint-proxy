@@ -38,4 +38,7 @@ the options below.
                -e "ETCD_PORT=4001" \
                -e "KUBERNETES_ENDPOINT=pandora-nginx" \
                -e "HAPROXY_HEALTH_CHECK_PATH=/robots.txt" \
+               -p 80:80 \
                zymlabs/kubernetes-endpoint-proxy
+
+Requests should then be routed through the proxy to the endpoint.
