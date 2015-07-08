@@ -20,6 +20,8 @@ ADD ./src/etc/confd/templates/haproxy.tmpl /etc/confd/templates/haproxy.tmpl
 ADD ./src/etc/confd/confd.toml /etc/confd/confd.toml
 ADD ./src/main.sh /opt/main.sh
 
+COPY ./src/etc/haproxy/errors/ /etc/haproxy/errors/
+
 RUN chmod +x /opt/main.sh
 
 EXPOSE 80 443
