@@ -5,7 +5,7 @@ MAINTAINER Geoffrey Tran <geoffrey.tran@gmail.com>
 ENV DEBIAN_FRONTEND noninteractive
 
 # Install haproxy
-RUN apt-get update -q \
+RUN apt-get update -q && \
     apt-get install -qy --no-install-recommends haproxy && \
     rm -rf /var/lib/apt/lists/*
 
