@@ -33,7 +33,8 @@ frontend http-in
 
     {{ range $spec := getvs "/registry/services/endpoints/*/*" }}
 	{{ $data := json $spec }}
-	{{ if eq $data.id getenv "KUBERNETES_ENDPOINT" }}
+    {{ $endpoint := getenv "KUBERNETES_ENDPOINT" }}
+	{{ if eq $data.id $endpoint }}
     acl {{ $data.id }}-aclrule hdr_beg(host) -i {{ getenv "HAPROXY_ACL" }}
     use_backend {{ $data.id }}}-cluster if {{ $data.id }}-aclrule
 	{{ end }}
