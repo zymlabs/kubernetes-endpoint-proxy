@@ -7,6 +7,8 @@ ENV DEBIAN_FRONTEND noninteractive
 # Install supervisor and haproxy
 RUN apt-get update -q && \
     apt-get install -qy --no-install-recommends supervisor haproxy && \
+    touch /var/run/haproxy.pid && \
+    chown haproxy:haproxy /var/run/haproxy.pid && \
     rm -rf /var/lib/apt/lists/*
 
 # Install confd
