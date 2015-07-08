@@ -12,6 +12,13 @@ endpoints.
 Given the following service in Kubernetes, we will run the proxy container with
 the options below.
 
+### Environment Variables
+
+ - ETCD_HOST - etcd host (leader.mesos)
+ - ETCD_PORT - etcd port (4001)
+ - KUBERNETES_ENDPOINT - Kubernetes endpoint id or service id
+ - HAPROXY_HEALTH_CHECK_PATH - Optional path for checking if an endpoint upstream is available.
+
 ### Kubernetes Service pandora-nginx
     {
         "id": "pandora-nginx",
@@ -26,4 +33,8 @@ the options below.
     }
 
 ### Docker Example
-    # docker run -e "ETCD_HOST=leader.mesos" -e "ETCD_PORT=4001" -e "KUBERNETES_ENDPOINT=pandora-nginx" -e "HAPROXY_HEALTH_CHECK_PATH=/robots.txt" zymlabs/kubernetes-endpoint-proxy
+    docker run -e "ETCD_HOST=leader.mesos" \
+               -e "ETCD_PORT=4001" \
+               -e "KUBERNETES_ENDPOINT=pandora-nginx" \
+               -e "HAPROXY_HEALTH_CHECK_PATH=/robots.txt" \
+               zymlabs/kubernetes-endpoint-proxy
