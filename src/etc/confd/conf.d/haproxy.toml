@@ -18,4 +18,4 @@ mode = "0644"
 # These are the commands that will be used to check whether the rendered config is
 # valid and to reload the actual service once the new config is in place
 check_cmd = "/usr/sbin/haproxy -c -q -f /etc/haproxy/haproxy.cfg"
-reload_cmd = "/usr/sbin/haproxy -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)"
+reload_cmd = "echo '[kubernetes-endpoint-proxy] Reloading HAProxy'; pkill haproxy"
