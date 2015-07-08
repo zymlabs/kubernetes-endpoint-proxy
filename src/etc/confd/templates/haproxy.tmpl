@@ -1,3 +1,5 @@
+{{ $endpoint := getenv "KUBERNETES_ENDPOINT" }}
+
 global
     maxconn 4096
     log /dev/log    local0
@@ -33,7 +35,6 @@ frontend http-in
 
     {{ range $spec := getvs "/registry/services/endpoints/*/*" }}
 	{{ $data := json $spec }}
-    {{ $endpoint := getenv "KUBERNETES_ENDPOINT" }}
 	{{ if eq $data.id $endpoint }}
     acl {{ $data.id }}-aclrule hdr_beg(host) -i {{ getenv "HAPROXY_ACL" }}
     use_backend {{ $data.id }}}-cluster if {{ $data.id }}-aclrule
@@ -48,7 +49,7 @@ backend http{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
     option forwardfor
     {{ range $spec := getvs "/registry/services/endpoints/*/*" }}
 	{{ $data := json $spec }}
-	{{ if eq $data.id getenv "KUBERNETES_ENDPOINT" }}
+	{{ if eq $data.id $endpoint }}
     {{ range $ref := $data.targetRefs }}
     server $ref.uid $ref.endpoint {{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }} check inter 30000 {{ end }}
 	{{ end }}
