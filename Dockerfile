@@ -1,0 +1,26 @@
+FROM debian:jessie
+MAINTAINER Geoffrey Tran <geoffrey.tran@gmail.com>
+
+# Disable user prompts
+ENV DEBIAN_FRONTEND noninteractive
+
+# Install haproxy
+RUN apt-get update -q \
+    apt-get install -qy --no-install-recommends haproxy && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install confd
+ADD https://github.com/kelseyhightower/confd/releases/download/v0.10.0/confd-0.10.0-linux-amd64 /usr/local/bin/confd
+RUN chmod u+x /usr/local/bin/confd && \
+	mkdir -p /etc/confd/conf.d && \
+	mkdir -p /etc/confd/templates
+
+ADD ./src/etc/confd/conf.d/haproxy.toml /etc/confd/conf.d/haproxy.toml
+ADD ./src/etc/confd/templates/haproxy.tmpl /etc/confd/templates/haproxy.tmpl
+ADD ./src/etc/confd/confd.toml /etc/confd/confd.toml
+ADD ./src/main.sh /opt/main.sh
+
+RUN chmod +x /opt/boot.sh
+
+EXPOSE 80 443
+CMD ["/opt/main.sh"]

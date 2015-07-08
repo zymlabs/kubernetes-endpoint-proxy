@@ -1,0 +1,55 @@
+global
+    maxconn 4096
+    log /dev/log    local0
+    log /dev/log    local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin
+    stats timeout 30s
+    user haproxy
+    group haproxy
+
+defaults
+    log global
+    mode    http
+    option  httplog
+    option  dontlognull
+    retries 3
+    redispatch
+    maxconn 2000
+    timeout connect 5000
+    timeout client  50000
+    timeout server  50000
+    errorfile 400 /etc/haproxy/errors/400.html
+    errorfile 403 /etc/haproxy/errors/403.html
+    errorfile 408 /etc/haproxy/errors/408.html
+    errorfile 500 /etc/haproxy/errors/500.html
+    errorfile 502 /etc/haproxy/errors/502.html
+    errorfile 503 /etc/haproxy/errors/503.html
+    errorfile 504 /etc/haproxy/errors/504.html
+
+frontend http-in
+    bind *:80
+    default_backend http
+
+    {{ range $spec := getvs "/registry/services/endpoints/*/*" }}
+	{{ $data := json $spec }}
+	{{ if eq $data.id getenv "KUBERNETES_ENDPOINT" }}
+    acl {{ $data.id }}-aclrule hdr_beg(host) -i {{ getenv "HAPROXY_ACL" }}
+    use_backend {{ $data.id }}}-cluster if {{ $data.id }}-aclrule
+	{{ end }}
+	{{ end }}
+
+backend http{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
+    option httpchk GET {{ getenv "HAPROXY_HEALTH_CHECK_PATH" }}
+    {{ end }}
+    balance leastconn
+    option httpclose
+    option forwardfor
+    {{ range $spec := getvs "/registry/services/endpoints/*/*" }}
+	{{ $data := json $spec }}
+	{{ if eq $data.id getenv "KUBERNETES_ENDPOINT" }}
+    {{ range $ref := $data.targetRefs }}
+    server $ref.uid $ref.endpoint {{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }} check inter 30000 {{ end }} {{ end }}
+	{{ end }}
+    {{ end }}
+    {{ end }}
