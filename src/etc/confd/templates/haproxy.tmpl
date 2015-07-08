@@ -49,7 +49,7 @@ backend http{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
 	{{ $data := json $spec }}
 	{{ if eq $data.id getenv "KUBERNETES_ENDPOINT" }}
     {{ range $ref := $data.targetRefs }}
-    server $ref.uid $ref.endpoint {{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }} check inter 30000 {{ end }} {{ end }}
+    server $ref.uid $ref.endpoint {{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }} check inter 30000 {{ end }}
 	{{ end }}
     {{ end }}
     {{ end }}

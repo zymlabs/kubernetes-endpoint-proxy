@@ -14,6 +14,7 @@ the options below.
 
 ### Environment Variables
 
+ - ETCD_SCHEME - etcd connection scheme (http)
  - ETCD_HOST - etcd host (leader.mesos)
  - ETCD_PORT - etcd port (4001)
  - KUBERNETES_ENDPOINT - Kubernetes endpoint id or service id
