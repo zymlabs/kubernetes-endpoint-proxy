@@ -20,7 +20,7 @@ ADD ./src/etc/confd/templates/haproxy.tmpl /etc/confd/templates/haproxy.tmpl
 ADD ./src/etc/confd/confd.toml /etc/confd/confd.toml
 ADD ./src/main.sh /opt/main.sh
 
-RUN chmod +x /opt/boot.sh
+RUN chmod +x /opt/main.sh
 
 EXPOSE 80 443
 CMD ["/opt/main.sh"]
