@@ -29,4 +29,4 @@ confd -interval 10 -node $ETCD_SCHEME://$ETCD_HOST:$ETCD_PORT -config-file /etc/
 echo "[mesos-kubernetes-proxy] confd is listening for changes on etcd..."
 
 echo "[mesos-kubernetes-proxy] Starting HAProxy..."
-exec haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid
+exec /usr/bin/supervisord
