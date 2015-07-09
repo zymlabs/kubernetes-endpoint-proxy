@@ -26,19 +26,20 @@ defaults
     errorfile 503 /etc/haproxy/errors/503.html
     errorfile 504 /etc/haproxy/errors/504.html
 
+{{ range $spec := getvs "/registry/services/endpoints/*/*" }}
+{{ $data := json $spec }}
+{{ if eq $data.id $endpoint }}
 frontend http-in
     bind *:80
-    default_backend http
+    default_backend {{ $data.id }}
 
-backend http{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
+backend {{ $data.id }}{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
     option httpchk GET {{ getenv "HAPROXY_HEALTH_CHECK_PATH" }}
     {{ end }}
     balance leastconn
     option httpclose
     option forwardfor
-    {{ range $spec := getvs "/registry/services/endpoints/*/*" }}
-	{{ $data := json $spec }}
-	{{ if eq $data.id $endpoint }}
+
     {{ range $ref := $data.targetRefs }}
     server {{ $ref.targetRef.uid }} {{ $ref.endpoint }} {{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }} check inter 30000 {{ end }}
 	{{ end }}
