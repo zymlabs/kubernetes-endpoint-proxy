@@ -23,7 +23,7 @@ ADD ./src/etc/supervisor/conf.d/rsyslogd.conf /etc/supervisor/conf.d/rsyslogd.co
 ADD ./src/etc/confd/conf.d/haproxy.toml /etc/confd/conf.d/haproxy.toml
 ADD ./src/etc/confd/templates/haproxy.tmpl /etc/confd/templates/haproxy.tmpl
 ADD ./src/etc/confd/confd.toml /etc/confd/confd.toml
-ADD ./etc/rsyslog.d/49-haproxy.conf /etc/rsyslog.d/49-haproxy.conf
+ADD ./src/etc/rsyslog.d/49-haproxy.conf /etc/rsyslog.d/49-haproxy.conf
 ADD ./src/main.sh /opt/main.sh
 
 COPY ./src/etc/haproxy/errors/ /etc/haproxy/errors/
