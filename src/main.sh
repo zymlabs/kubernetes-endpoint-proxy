@@ -11,8 +11,8 @@ export ETCD_PROTOCOL
 export ETCD_HOST
 export ETCD_PORT
 
-# Generate configuration by looping through .dist files in /etc/nginx/conf.d/default.conf
-for f in /etc/haproxy/errors/*.html
+# Replace env variables
+for f in /etc/haproxy/errors/*.http
 do
     # Replace ${VAR} with variables set in environment.
     perl -p -e 's/\$\{([^}]+)\}/defined $ENV{$1} ? $ENV{$1} : $&/eg' $f > $f
