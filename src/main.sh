@@ -15,7 +15,8 @@ export ETCD_PORT
 for f in /etc/haproxy/errors/*.http
 do
     # Replace ${VAR} with variables set in environment.
-    perl -p -e 's/\$\{([^}]+)\}/defined $ENV{$1} ? $ENV{$1} : $&/eg' $f > $f
+    perl -p -e 's/\$\{([^}]+)\}/defined $ENV{$1} ? $ENV{$1} : $&/eg' $f > "${f}.tmp"
+    mv "${f}.tmp" $f
 done
 
 if [ -z "$KUBERNETES_ENDPOINT" ]; then

@@ -7,4 +7,4 @@ Use their editor to customize the pages to your project.
 
 Also appended is an HTML comment at the end of error pages to allow easier debugging in a complex environment.
 
-    <!-- Bamboo ${HOSTNAME} on ${HOST} -->
+    <!-- Kubernetes Endpoint Proxy ${HOSTNAME} -->

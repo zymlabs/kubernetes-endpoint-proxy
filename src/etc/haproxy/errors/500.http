@@ -196,6 +196,6 @@ Content-Type: text/html
 
     </script>
 
-    <!-- Kubernetes Endpoint Proxy ${HOSTNAME} on ${HOST} -->
+    <!-- Kubernetes Endpoint Proxy ${HOSTNAME} -->
   </body>
 </html>
