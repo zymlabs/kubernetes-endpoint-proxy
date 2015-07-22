@@ -28,12 +28,21 @@ defaults
 
 {{ range $spec := getvs "/registry/services/endpoints/*/*" }}
 {{ $data := json $spec }}
-{{ if eq $data.id $endpoint }}
+
+{{ if eq $data.apiVersion "v1beta1" "v1beta2" "v1beta3" }}
+{{ $dataName := $data.id }}
+{{ end }}
+
+{{ if eq $data.apiVersion "v1" }}
+{{ $dataName := $data.metadata.name }}
+{{ end }}
+
+{{ if eq $dataName $endpoint }}
 frontend http-in
     bind *:80
-    default_backend {{ $data.id }}
+    default_backend {{ $dataName }}
 
-backend {{ $data.id }}{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
+backend {{ $dataName }}{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
     option httpchk GET {{ getenv "HAPROXY_HEALTH_CHECK_PATH" }}
     {{ end }}
     balance leastconn
@@ -43,5 +52,5 @@ backend {{ $data.id }}{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
     {{ range $ref := $data.targetRefs }}
     server {{ $ref.targetRef.uid }} {{ $ref.endpoint }} {{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }} check inter 30000 {{ end }}
 	{{ end }}
-    {{ end }}
-    {{ end }}
+{{ end }}
+{{ end }}
