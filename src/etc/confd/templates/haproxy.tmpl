@@ -28,21 +28,36 @@ defaults
 
 {{ range $spec := getvs "/registry/services/endpoints/*/*" }}
 {{ $data := json $spec }}
-
-{{ if eq $data.apiVersion "v1beta1" "v1beta2" "v1beta3" }}
-{{ $dataName := $data.id }}
-{{ end }}
-
 {{ if eq $data.apiVersion "v1" }}
-{{ $dataName := $data.metadata.name }}
-{{ end }}
-
-{{ if eq $dataName $endpoint }}
+{{ if eq $data.metadata.name  $endpoint }}
 frontend http-in
     bind *:80
-    default_backend {{ $dataName }}
+    default_backend {{ $data.metadata.name }}
 
-backend {{ $dataName }}{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
+backend {{ $data.metadata.name }}{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
+    option httpchk GET {{ getenv "HAPROXY_HEALTH_CHECK_PATH" }}
+    {{ end }}
+    balance leastconn
+    option httpclose
+    option forwardfor
+
+    {{ range $subset := $data.subsets }}
+    {{ range $ref := $subset.addresses }}
+    {{ range $portConfig := $subset.ports }}
+    server {{ $ref.targetRef.name }} {{ $ref.ip }}:{{ $portConfig.port }} {{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }} check inter 30000 {{ end }}
+    {{ end }}
+    {{ end }}
+    {{ end }}
+{{ end }}
+{{ end }}
+
+{{ if eq $data.apiVersion "v1beta1" "v1beta2" "v1beta3" }}
+{{ if eq $data.id $endpoint }}
+frontend http-in
+    bind *:80
+    default_backend {{ $data.id }}
+
+backend {{ $data.id }}{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
     option httpchk GET {{ getenv "HAPROXY_HEALTH_CHECK_PATH" }}
     {{ end }}
     balance leastconn
@@ -52,5 +67,6 @@ backend {{ $dataName }}{{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }}
     {{ range $ref := $data.targetRefs }}
     server {{ $ref.targetRef.uid }} {{ $ref.endpoint }} {{ if getenv "HAPROXY_HEALTH_CHECK_PATH" }} check inter 30000 {{ end }}
 	{{ end }}
+{{ end }}
 {{ end }}
 {{ end }}
